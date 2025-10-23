@@ -1,0 +1,40 @@
+name: Auto start car
+
+# This workflow remotely starts your vehicle on weekdays at 12:00 UTC (7:00 AM EST).
+# It can also be run manually via the Actions tab using the workflow_dispatch event.
+
+on:
+  schedule:
+    # At 12:00 UTC (00 minute, 12th hour) on Monday through Friday.
+    - cron: '0 12 * * 1-5'
+  workflow_dispatch:
+
+jobs:
+  start-car:
+    name: Start car via DroneMobile
+    runs-on: ubuntu-latest
+    steps:
+      # Check out the contents of this repository so the start script is available
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Set up a Python 3.10 runtime
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      # Install dependencies
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          # Install the DroneMobile client library.  Pin to a minimum version to
+          # ensure the start command is available.
+          pip install 'drone_mobile>=0.2.30'
+
+      # Run the script with environment variables from GitHub Secrets.
+      - name: Start the first vehicle on the account
+        env:
+          DRONEMOBILE_USERNAME: ${{ secrets.DRONEMOBILE_USERNAME }}
+          DRONEMOBILE_PASSWORD: ${{ secrets.DRONEMOBILE_PASSWORD }}
+        run: python start_my_car.py
