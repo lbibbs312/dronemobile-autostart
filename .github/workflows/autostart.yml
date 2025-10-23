@@ -6,7 +6,7 @@ name: Auto start car
 on:
   schedule:
     # At 12:00 UTC (00 minute, 12th hour) on Monday through Friday.
-    - cron: '0 12 * * 1-5'
+    - cron: ' 010 * * 1-5'
   workflow_dispatch:
 
 jobs:
